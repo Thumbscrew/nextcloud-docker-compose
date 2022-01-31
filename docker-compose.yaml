@@ -70,3 +70,13 @@ services:
       NGINX_HOST: ${NGINX_HOST}
     depends_on:
       - nextcloud
+
+  cron:
+    image: nextcloud:${NEXTCLOUD_TAG}
+    restart: unless-stopped
+    volumes:
+      - ${VOLUME_PATH}/var/www/html:/var/www/html
+    entrypoint: /cron.sh
+    depends_on:
+      - db
+      - redis
