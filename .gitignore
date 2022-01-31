@@ -1,2 +1,5 @@
 .env
-mariadb_password.txt
+
+# Secrets
+secrets/postgres_password.txt
+secrets/nextcloud*

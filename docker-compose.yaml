@@ -1,21 +1,29 @@
 secrets:
-  mariadb_password:
-    file: ./mariadb_password.txt
+  postgres_db:
+    file: ./secrets/postgres_db.txt
+  postgres_user:
+    file: ./secrets/postgres_user.txt
+  postgres_password:
+    file: ./secrets/postgres_password.txt
+  nextcloud_admin_user:
+    file: ./secrets/nextcloud_admin_user.txt
+  nextcloud_admin_password:
+    file: ./secrets/nextcloud_admin_password.txt
 
 services:
   db:
-    image: mariadb:${MARIADB_TAG}
+    image: postgres:${POSTGRES_TAG}
     restart: unless-stopped
-    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
-    secrets:
-      - mariadb_password
     volumes:
-      - ${VOLUME_PATH}/var/lib/mysql:/var/lib/mysql
+      - ${VOLUME_PATH}/var/lib/postgresql/data:/var/lib/postgresql/data:rw
+    secrets:
+      - postgres_db
+      - postgres_user
+      - postgres_password
     environment:
-      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
-      MARIADB_PASSWORD_FILE: /run/secrets/mariadb_password
-      MARIADB_DATABASE: nextcloud
-      MARIADB_USER: nextcloud
+      POSTGRES_DB_FILE: /run/secrets/postgres_db
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
 
   redis:
     image: redis:alpine
@@ -28,14 +36,20 @@ services:
         NEXTCLOUD_TAG: ${NEXTCLOUD_TAG}
     restart: unless-stopped
     volumes:
-      - ${VOLUME_PATH}/var/www/html:/var/www/html
+      - ${VOLUME_PATH}/var/www/html:/var/www/html:rw
     secrets:
-      - mariadb_password
+      - postgres_db
+      - postgres_user
+      - postgres_password
+      - nextcloud_admin_user
+      - nextcloud_admin_password
     environment:
-      MYSQL_PASSWORD_FILE: /run/secrets/mariadb_password
-      MYSQL_DATABASE: nextcloud
-      MYSQL_USER: nextcloud
-      MYSQL_HOST: db
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB_FILE: /run/secrets/postgres_db
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_HOST: db
+      NEXTCLOUD_ADMIN_PASSWORD_FILE: /run/secrets/nextcloud_admin_password
+      NEXTCLOUD_ADMIN_USER_FILE: /run/secrets/nextcloud_admin_user
       REDIS_HOST: redis
       NEXTCLOUD_TRUSTED_DOMAINS: ${NGINX_HOST}
       OVERWRITEPROTOCOL: https
