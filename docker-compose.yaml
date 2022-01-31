@@ -1,0 +1,44 @@
+secrets:
+  mariadb_password:
+    file: ./mariadb_password.txt
+
+services:
+  db:
+    image: mariadb:${MARIADB_TAG}
+    restart: unless-stopped
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
+    secrets:
+        - mariadb_password
+    volumes:
+      - ${VOLUME_PATH}/var/lib/mysql:/var/lib/mysql
+    environment:
+      MARIADB_RANDOM_ROOT_PASSWORD: "yes"
+      MARIADB_PASSWORD_FILE: /run/secrets/mariadb_password
+      MARIADB_DATABASE: nextcloud
+      MARIADB_USER: nextcloud
+
+  redis:
+    image: redis:alpine
+    restart: unless-stopped
+
+  nextcloud:
+    build:
+      context: nextcloud
+      args:
+        NEXTCLOUD_TAG: ${NEXTCLOUD_TAG}
+    restart: unless-stopped
+    volumes:
+      - ${VOLUME_PATH}/var/www/html:/var/www/html
+    secrets:
+      - mariadb_password
+    environment:
+      MYSQL_PASSWORD_FILE: /run/secrets/mariadb_password
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_HOST: db
+      REDIS_HOST: redis
+      NEXTCLOUD_TRUSTED_DOMAINS: ${NGINX_HOST}
+      OVERWRITEPROTOCOL: https
+    depends_on:
+      - db
+      - redis
