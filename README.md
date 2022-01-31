@@ -37,7 +37,7 @@ echo "SuperSecretPassword" > secrets/nextcloud_admin_password.txt # Replace with
 7. Bring up the containers!
 
 ```bash
-sudo docker-compose up --build -d
+sudo docker-compose -p nextcloud up --build -d
 ```
 
 8. (Optional) To enable some file previews copy [previews.config.php](nextcloud/previews.config.php) into your Nextcloud's `config` directory (replace `$volume` with the path you have set in the `VOLUME_PATH` environment variable):
