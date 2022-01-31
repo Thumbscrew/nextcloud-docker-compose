@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
     command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW --innodb-file-per-table=1 --skip-innodb-read-only-compressed
     secrets:
-        - mariadb_password
+      - mariadb_password
     volumes:
       - ${VOLUME_PATH}/var/lib/mysql:/var/lib/mysql
     environment:
@@ -42,3 +42,17 @@ services:
     depends_on:
       - db
       - redis
+
+  nginx:
+    build: nginx
+    restart: unless-stopped
+    ports:
+      - ${NGINX_HTTP_PORT}:80
+      - ${NGINX_HTTPS_PORT}:443
+    volumes:
+      - ${SSL_CERT_PATH}:/etc/ssl/certs/server.cert.pem
+      - ${SSL_KEY_PATH}:/etc/ssl/private/server.key.pem
+    environment:
+      NGINX_HOST: ${NGINX_HOST}
+    depends_on:
+      - nextcloud
