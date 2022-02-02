@@ -1,13 +1,13 @@
 # Nextcloud (Docker Compose)
 Build a Nextcloud instance in Docker Compose complete with PostgreSQL, Redis and SSL
 
-# Prerequisites
+## Prerequisites
 
 1. [Docker](https://docs.docker.com/engine/install/)
 2. [Docker Compose](https://docs.docker.com/compose/install/)
 3. SSL key and cert
 
-# Setup
+## Setup
 
 1. Create a copy of `.env.example`:
 
