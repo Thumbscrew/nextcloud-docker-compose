@@ -10,6 +10,12 @@ secrets:
   nextcloud_admin_password:
     file: ./secrets/nextcloud_admin_password.txt
 
+networks:
+  frontend:
+    external: true
+    name: ${DOCKER_PROXY_NETWORK}
+  backend:
+
 services:
   db:
     image: postgres:${POSTGRES_TAG}
@@ -20,6 +26,8 @@ services:
       - postgres_db
       - postgres_user
       - postgres_password
+    networks:
+      - backend
     environment:
       POSTGRES_DB_FILE: /run/secrets/postgres_db
       POSTGRES_USER_FILE: /run/secrets/postgres_user
@@ -28,6 +36,8 @@ services:
   redis:
     image: redis:alpine
     restart: unless-stopped
+    networks:
+      - backend
 
   nextcloud:
     build:
@@ -43,6 +53,9 @@ services:
       - postgres_password
       - nextcloud_admin_user
       - nextcloud_admin_password
+    networks:
+      - frontend
+      - backend
     environment:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_DB_FILE: /run/secrets/postgres_db
@@ -57,25 +70,13 @@ services:
       - db
       - redis
 
-  nginx:
-    build: nginx
-    restart: unless-stopped
-    ports:
-      - ${NGINX_HTTP_PORT}:80
-      - ${NGINX_HTTPS_PORT}:443
-    volumes:
-      - ${SSL_CERT_PATH}:/etc/ssl/certs/server.cert.pem:ro
-      - ${SSL_KEY_PATH}:/etc/ssl/private/server.key.pem:ro
-    environment:
-      NGINX_HOST: ${NGINX_HOST}
-    depends_on:
-      - nextcloud
-
   cron:
     image: nextcloud:${NEXTCLOUD_TAG}
     restart: unless-stopped
     volumes:
       - ${VOLUME_PATH}/var/www/html:/var/www/html
+    networks:
+      - backend
     entrypoint: /cron.sh
     depends_on:
       - db
