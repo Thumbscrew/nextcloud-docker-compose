@@ -64,7 +64,7 @@ services:
       NEXTCLOUD_ADMIN_PASSWORD_FILE: /run/secrets/nextcloud_admin_password
       NEXTCLOUD_ADMIN_USER_FILE: /run/secrets/nextcloud_admin_user
       REDIS_HOST: redis
-      NEXTCLOUD_TRUSTED_DOMAINS: ${NGINX_HOST}
+      NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_DOMAIN}
       OVERWRITEPROTOCOL: https
     depends_on:
       - db
