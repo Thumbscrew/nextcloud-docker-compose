@@ -27,15 +27,6 @@ cp .env.example .env
 - `secrets/nextcloud_admin_user.txt`
 - `secrets/nextcloud_admin_password.txt`
 
-```bash
-# Postgres
-echo "SuperSecretPassword" > secrets/postgres_password.txt # Replace with your own super secret password
-
-# Nextcloud
-echo "admin" > secrets/nextcloud_admin_user.txt                   # Replace with desired admin username
-echo "SuperSecretPassword" > secrets/nextcloud_admin_password.txt # Replace with super secret password for admin Nextcloud user
-```
-
 6. Bring up the containers!
 
 ```bash
