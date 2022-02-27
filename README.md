@@ -44,5 +44,5 @@ sudo docker-compose -p nextcloud up --build -d
 
 ```bash
 sudo cp nextcloud/previews.config.php $volume/var/www/html/config/
-sudo chown www-data:root $volume/var/www/html/config/
+sudo chown www-data:root $volume/var/www/html/config/previews.config.php
 ```
