@@ -45,6 +45,8 @@ services:
       args:
         NEXTCLOUD_TAG: ${NEXTCLOUD_TAG}
     restart: unless-stopped
+    mem_reservation: ${NEXTCLOUD_MEM_RES:-512m}
+    mem_limit: ${NEXTCLOUD_MEM_LIMIT:-4g}
     volumes:
       - ${VOLUME_PATH}/var/www/html:/var/www/html:rw
     secrets:
