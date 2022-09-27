@@ -17,22 +17,6 @@ networks:
   backend:
 
 services:
-  db:
-    image: postgres:${POSTGRES_TAG}
-    restart: unless-stopped
-    volumes:
-      - ${VOLUME_PATH}/var/lib/postgresql/data:/var/lib/postgresql/data:rw
-    secrets:
-      - postgres_db
-      - postgres_user
-      - postgres_password
-    networks:
-      - backend
-    environment:
-      POSTGRES_DB_FILE: /run/secrets/postgres_db
-      POSTGRES_USER_FILE: /run/secrets/postgres_user
-      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
-
   redis:
     image: redis:alpine
     restart: unless-stopped
@@ -62,14 +46,13 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
       POSTGRES_DB_FILE: /run/secrets/postgres_db
       POSTGRES_USER_FILE: /run/secrets/postgres_user
-      POSTGRES_HOST: db
+      POSTGRES_HOST: ${POSTGRES_HOST}
       NEXTCLOUD_ADMIN_PASSWORD_FILE: /run/secrets/nextcloud_admin_password
       NEXTCLOUD_ADMIN_USER_FILE: /run/secrets/nextcloud_admin_user
       REDIS_HOST: redis
       NEXTCLOUD_TRUSTED_DOMAINS: ${NEXTCLOUD_DOMAIN}
       OVERWRITEPROTOCOL: https
     depends_on:
-      - db
       - redis
 
   cron:
@@ -81,5 +64,4 @@ services:
       - backend
     entrypoint: /cron.sh
     depends_on:
-      - db
       - redis

@@ -1,5 +1,5 @@
 # Nextcloud (Docker Compose)
-Build a Nextcloud instance in Docker Compose complete with PostgreSQL and Redis
+Build a Nextcloud instance in Docker Compose complete with Redis and optional PostgreSQL
 
 ## Prerequisites
 
@@ -36,7 +36,11 @@ cp .env.example .env
 7. Bring up the containers!
 
 ```bash
+# No PostgreSQL (if you have your own PostgreSQL DB)
 sudo docker-compose -p nextcloud up --build -d
+
+# With Dockerized PostgreSQL
+sudo docker-compose -f docker-compose.yaml -f docker-compose.db.yaml -p nextcloud up --build -d
 ```
 
 8. (Optional) To enable some file previews copy [previews.config.php](nextcloud/previews.config.php) into your Nextcloud's `config` directory (replace `$volume` with the path you have set in the `VOLUME_PATH` environment variable):
