@@ -12,7 +12,7 @@ secrets:
 
 networks:
   frontend:
-    external: true
+    external: ${DOCKER_PROXY_EXT-true}
     name: ${DOCKER_PROXY_NETWORK}
   backend:
 
