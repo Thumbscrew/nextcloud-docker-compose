@@ -1,0 +1,24 @@
+services:
+  db:
+    image: postgres:${POSTGRES_TAG}
+    restart: unless-stopped
+    volumes:
+      - ${VOLUME_PATH}/var/lib/postgresql/data:/var/lib/postgresql/data:rw
+    secrets:
+      - postgres_db
+      - postgres_user
+      - postgres_password
+    networks:
+      - backend
+    environment:
+      POSTGRES_DB_FILE: /run/secrets/postgres_db
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+  nextcloud:
+    environment:
+      POSTGRES_HOST: db
+    depends_on:
+      - db
+  cron:
+    depends_on:
+      - db
